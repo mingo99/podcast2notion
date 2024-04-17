@@ -201,9 +201,9 @@ def insert_podcast():
     dict = {}
     for index, result in enumerate(results):
         podcast = {}
-        if result.get("subscritionStar"):
+        if result.get("subscriptionStar"):
             podcast["订阅状态"] = "星标订阅"
-        elif result.get("subscritionStatus"):
+        elif result.get("subscriptionStatus") == "ON":
             podcast["订阅状态"] = "普通订阅"
         else:
             podcast["订阅状态"] = "未订阅"
