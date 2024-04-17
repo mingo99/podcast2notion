@@ -1,5 +1,3 @@
-import argparse
-import json
 import os
 
 import pendulum
@@ -10,11 +8,9 @@ from notion_helper import NotionHelper
 from retrying import retry
 
 load_dotenv()
-DOUBAN_API_HOST = os.getenv("DOUBAN_API_HOST", "frodo.douban.com")
-DOUBAN_API_KEY = os.getenv("DOUBAN_API_KEY", "0ac44ae016490db2204ce0a042db2916")
 
-from config import (TAG_ICON_URL, book_properties_type_dict,
-                    movie_properties_type_dict)
+from config import (TAG_ICON_URL, episode_properties_type_dict,
+                    podcast_properties_type_dict)
 from utils import get_icon
 
 headers = {
@@ -201,18 +197,17 @@ def insert_podcast():
     dict = {}
     for index, result in enumerate(results):
         podcast = {}
-        if result.get("subscriptionStar"):
-            podcast["订阅状态"] = "星标订阅"
-        elif result.get("subscriptionStatus") == "ON":
-            podcast["订阅状态"] = "普通订阅"
-        else:
-            podcast["订阅状态"] = "未订阅"
 
+        subStatus = "未订阅"
+        if result.get("subscriptionStar"):
+            subStatus = "星标订阅"
+        elif result.get("subscriptionStatus") == "ON":
+            subStatus = "普通订阅"
+            
+        podcast["订阅状态"] = subStatus
         podcast["播客"] = result.get("title")
         podcast["简介"] = result.get("brief")
         podcast["总单集数"] = result.get("episodeCount")
-        pid = result.get("pid")
-        podcast["Pid"] = pid
         podcast["收听时长"] = result.get("playedSeconds", 0)
         podcast["描述"] = result.get("description")
         podcast["链接"] = f"https://www.xiaoyuzhoufm.com/podcast/{result.get('pid')}"
@@ -235,7 +230,11 @@ def insert_podcast():
             )
             for x in result.get("podcasters")
         ]
-        properties = utils.get_properties(podcast, movie_properties_type_dict)
+
+        pid = result.get("pid")
+        podcast["Pid"] = pid
+
+        properties = utils.get_properties(podcast, podcast_properties_type_dict)
         parent = {
             "database_id": notion_helper.podcast_database_id,
             "type": "database_id",
@@ -280,7 +279,7 @@ def insert_episode(episodes, d):
         elif result.get("isPlayed"):
             status = "在听"
         episode["状态"] = status
-        properties = utils.get_properties(episode, book_properties_type_dict)
+        properties = utils.get_properties(episode, episode_properties_type_dict)
         print(
             f"正在同步 = {result.get('title')}，共{len(episodes)}个Episode，当前是第{index+1}个"
         )
@@ -299,6 +298,9 @@ def insert_episode(episodes, d):
 
 if __name__ == "__main__":
     notion_helper = NotionHelper()
+    # print(notion_helper.podcast_database_id, notion_helper.episode_database_id)
+    # print(notion_helper.all_database_id, notion_helper.author_database_id)
+    # sys.exit()
     refresh_token()
     d = insert_podcast()
     episodes = get_history()
