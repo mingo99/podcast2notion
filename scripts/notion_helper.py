@@ -24,7 +24,7 @@ class NotionHelper:
     database_name_dict = {
         "PODCAST_DATABASE_NAME": "节目",
         "EPISODE_DATABASE_NAME": "单集",
-        "ALL_DATABASE_NAME": "全部",
+        "ALL_DATABASE_NAME": "总时长",
         "AUTHOR_DATABASE_NAME": "作者",
     }
     database_id_dict = {}
