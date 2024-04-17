@@ -2,22 +2,17 @@ import logging
 import os
 import re
 import time
+from datetime import timedelta
 
+from dotenv import load_dotenv
 from notion_client import Client
 from retrying import retry
-from datetime import timedelta
-from dotenv import load_dotenv
+
 load_dotenv()
-from utils import (
-    format_date,
-    get_date,
-    get_first_and_last_day_of_month,
-    get_first_and_last_day_of_week,
-    get_first_and_last_day_of_year,
-    get_icon,
-    get_relation,
-    get_title,
-)
+from utils import (format_date, get_date, get_first_and_last_day_of_month,
+                   get_first_and_last_day_of_week,
+                   get_first_and_last_day_of_year, get_icon, get_relation,
+                   get_title)
 
 TAG_ICON_URL = "https://www.notion.so/icons/tag_gray.svg"
 USER_ICON_URL = "https://www.notion.so/icons/user-circle-filled_gray.svg"
@@ -27,10 +22,10 @@ BOOKMARK_ICON_URL = "https://www.notion.so/icons/bookmark_gray.svg"
 
 class NotionHelper:
     database_name_dict = {
-        "PODCAST_DATABASE_NAME": "Podcast",
-        "EPISODE_DATABASE_NAME": "Episode",
+        "PODCAST_DATABASE_NAME": "节目",
+        "EPISODE_DATABASE_NAME": "单集",
         "ALL_DATABASE_NAME": "全部",
-        "AUTHOR_DATABASE_NAME": "Author",
+        "AUTHOR_DATABASE_NAME": "作者",
     }
     database_id_dict = {}
     image_dict = {}
