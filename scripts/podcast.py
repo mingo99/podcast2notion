@@ -201,12 +201,20 @@ def insert_podcast():
     dict = {}
     for index, result in enumerate(results):
         podcast = {}
+        if result.get("subscritionStar"):
+            podcast["订阅状态"] = "星标订阅"
+        elif result.get("subscritionStatus"):
+            podcast["订阅状态"] = "普通订阅"
+        else:
+            podcast["订阅状态"] = "未订阅"
+
         podcast["播客"] = result.get("title")
-        podcast["Brief"] = result.get("brief")
+        podcast["简介"] = result.get("brief")
+        podcast["总单集数"] = result.get("episodeCount")
         pid = result.get("pid")
         podcast["Pid"] = pid
         podcast["收听时长"] = result.get("playedSeconds", 0)
-        podcast["Description"] = result.get("description")
+        podcast["描述"] = result.get("description")
         podcast["链接"] = f"https://www.xiaoyuzhoufm.com/podcast/{result.get('pid')}"
         podcast["最后更新时间"] = (
             pendulum.parse(result.get("latestEpisodePubDate"))
@@ -255,7 +263,7 @@ def insert_episode(episodes, d):
             continue
         episode = {}
         episode["标题"] = result.get("title")
-        episode["Description"] = result.get("description")
+        episode["描述"] = result.get("description")
         episode["时间戳"] = result.get("pubDate")
         episode["发布时间"] = result.get("pubDate")
         episode["音频"] = result.get("media").get("source").get("url")
@@ -264,7 +272,7 @@ def insert_episode(episodes, d):
  
         episode["时长"] = result.get("duration")
         episode["喜欢"] = result.get("isPicked")
-        episode["Podcast"] = [d.get(pid)[0]]
+        episode["节目"] = [d.get(pid)[0]]
         episode["链接"] = f"hhttps://www.xiaoyuzhoufm.com/episode/{result.get('eid')}"
         status = "未听"
         if result.get("isFinished"):
