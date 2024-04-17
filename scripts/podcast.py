@@ -1,24 +1,21 @@
 import argparse
 import json
 import os
+
 import pendulum
-from retrying import retry
 import requests
-from notion_helper import NotionHelper
 import utils
 from dotenv import load_dotenv
+from notion_helper import NotionHelper
+from retrying import retry
 
 load_dotenv()
 DOUBAN_API_HOST = os.getenv("DOUBAN_API_HOST", "frodo.douban.com")
 DOUBAN_API_KEY = os.getenv("DOUBAN_API_KEY", "0ac44ae016490db2204ce0a042db2916")
 
-from config import (
-    movie_properties_type_dict,
-    book_properties_type_dict,
-    TAG_ICON_URL,
-)
+from config import (TAG_ICON_URL, book_properties_type_dict,
+                    movie_properties_type_dict)
 from utils import get_icon
-
 
 headers = {
     "host": "api.xiaoyuzhoufm.com",
@@ -217,9 +214,9 @@ def insert_podcast():
             .int_timestamp
         )
         cover = result.get("image").get("picUrl")
-        podcast["全部"] = [
+        podcast["总时长"] = [
             notion_helper.get_relation_id(
-                "全部", notion_helper.all_database_id, TAG_ICON_URL
+                "总时长", notion_helper.all_database_id, TAG_ICON_URL
             )
         ]
         podcast["作者"] = [
